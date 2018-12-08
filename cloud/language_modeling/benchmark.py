@@ -70,11 +70,14 @@ def runOneBatch(model, dataset):
     model.run(inputs, labels)
 
 def runWarmup(model, dataset):
+    print("Running warmup...")
     runOneBatch(model, dataset)
     dataset.reset()
 
 def runBenchmarkWithTiming(arguments, model, dataset):
     import time
+
+    print("Running benchmark...")
 
     losses = []
     times  = []
@@ -89,7 +92,7 @@ def runBenchmarkWithTiming(arguments, model, dataset):
         times.append(end - start)
 
     print("Longest latency was: " + str(sorted(times)[-1]) + " seconds.")
-    print("Perplexity: " + str(getPerplexity(losses)))
+    print("Perplexity: " + str(getPerplexity(losses)) + ", target is 40.209 .")
 
 def getPerplexity(losses):
     return 2**(sum(losses) / len(losses))
@@ -109,7 +112,7 @@ def extract(filename, path):
 
 def downloadModel(arguments):
     import os
-    import urllib
+    import urllib.request
     filename = "model-checkpoint.tar.gz"
     if not os.path.exists(filename):
         print("Downloading model from " + arguments["model_url"])
@@ -188,6 +191,7 @@ class Dataset:
 
 def downloadValidationDataset(arguments):
     import os
+    import urllib.request
     filename = "validation-dataset.tar.gz"
     if not os.path.exists(filename):
         print("Downloading dataset from " + arguments["validation_dataset_url"])
